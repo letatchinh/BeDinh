@@ -49,7 +49,7 @@ let getEditCRUD = async (req, res) => {
             user: userData
         })
     }else{
-        // console.log(req.query.id)
+        console.log(req.query.id)
         return res.send('Users not found!')
     }
 }
