@@ -5,7 +5,10 @@ const { Sequelize } = require('sequelize');
 const sequelize = new Sequelize('project', 'root', null , {
   host: 'localhost',
   dialect: 'mysql',
-  logging: false
+  logging: false,
+  // define: {
+  //       timestamps: false
+  //   }
 });
 
 let connectDB = async () => {
