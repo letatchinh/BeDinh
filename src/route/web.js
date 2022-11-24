@@ -5,6 +5,7 @@ import userController from "../controllers/userController";
 import patientController from "../controllers/patientController";
 import specialtyController from "../controllers/specialtyController";
 import clinicController from "../controllers/clinicController";
+import commentController from "../controllers/commentController";
 
 let router = express.Router();
 
@@ -73,6 +74,9 @@ let initWebRoutes = (app) => {
     "/api/get-detail-clinic-by-id",
     clinicController.getDetailClinicById
   );
+
+  //comment
+  router.get("/api/create-new-comment", commentController.createNewComment);
 
   return app.use("/", router);
 };
