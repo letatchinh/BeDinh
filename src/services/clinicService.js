@@ -57,10 +57,38 @@ let getAllClinic = () => {
 let getClinicByName = (name) => {
   return new Promise(async (resolve, reject) => {
     try {
-    
-      let data = await db.Clinic.findAll({where : {
-       name : { [Op.like] : '%' + name + '%'}
-      }});
+      let dataClinic = await db.Clinic.findAll({
+        where: {
+          name: { [Op.like]: "%" + name.toLowerCase().trim() + "%" },
+        },
+      });
+      let dataSpecialty = await db.Specialty.findAll({
+        where: {
+          name: { [Op.like]: "%" + name.toLowerCase().trim() + "%" },
+        },
+      });
+      let dataUser = await db.User.findAll({
+        where: {
+          [Op.and]: [
+            {
+              roleId: "R2",
+              [Op.or]: [
+                {
+                  firstName: {
+                    [Op.like]: "%" + name.toLowerCase().trim() + "%",
+                  },
+                },
+                {
+                  lastName: {
+                    [Op.like]: "%" + name.toLowerCase().trim() + "%",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      });
+      const data = [...dataClinic, ...dataSpecialty, ...dataUser];
       if (data && data.length > 0) {
         data.map((item) => {
           item.image = new Buffer(item.image, "base64").toString("binary");
