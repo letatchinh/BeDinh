@@ -1,5 +1,5 @@
-import db from "../models/index";
-
+import db, { Sequelize } from "../models/index";
+const Op = Sequelize.Op;
 let createClinic = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -54,7 +54,29 @@ let getAllClinic = () => {
     }
   });
 };
-
+let getClinicByName = (name) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+    
+      let data = await db.Clinic.findAll({where : {
+       name : { [Op.like] : '%' + name + '%'}
+      }});
+      if (data && data.length > 0) {
+        data.map((item) => {
+          item.image = new Buffer(item.image, "base64").toString("binary");
+          return item;
+        });
+      }
+      resolve({
+        errCode: 0,
+        errMessage: "ok",
+        data,
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 let getDetailClinicById = (inputId) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -101,4 +123,5 @@ module.exports = {
   createClinic: createClinic,
   getAllClinic: getAllClinic,
   getDetailClinicById: getDetailClinicById,
+  getClinicByName:getClinicByName
 };
