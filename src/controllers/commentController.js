@@ -13,6 +13,23 @@ let createNewComment = async (req, res) => {
   }
 };
 
+let getCommentByUserId = async (req, res) => {
+  try {
+    const comments = await db.Comment.findAll({
+      where: { userId: req.query.userId },
+    });
+
+    return res.status(200).json(comments);
+  } catch (e) {
+    console.log(e);
+    return res.status(200).json({
+      errCode: -1,
+      errMessage: "Error from the server",
+    });
+  }
+};
+
 module.exports = {
   createNewComment: createNewComment,
+  getCommentByUserId,
 };

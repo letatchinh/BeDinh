@@ -76,7 +76,10 @@ let initWebRoutes = (app) => {
   );
 
   //comment
-  router.get("/api/create-new-comment", commentController.createNewComment);
+  router.get(
+    "/api/get-comment-by-userId",
+    commentController.getCommentByUserId
+  );
 
   return app.use("/", router);
 };
