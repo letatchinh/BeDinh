@@ -105,8 +105,65 @@ let getDetailSpecialtyById = (inputId, location) => {
   });
 };
 
+let updateSpecialty = (id, data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const specialty = await db.Specialty.findOne({
+        where: {
+          id,
+        }
+      });
+      if (!specialty) {
+        resolve({
+          errCode: 1,
+          errMessage: "Specialty not found!",
+        });
+      } else {
+        const specialtyUpdated = await db.Specialty.update({
+          name: data.name,
+          image: data.image,
+          descriptionHTML: data.descriptionHTML,
+          descriptionMarkdown: data.descriptionMarkdown
+        }, {
+          where: {
+            id,
+          }
+        });
+
+        resolve({
+          errCode: 0,
+          errMessage: "ok",
+          data: specialtyUpdated,
+        });
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+let deleteSpecialty = (id) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await db.Specialty.destroy({
+        where: {
+          id,
+        }
+      });
+      resolve({
+        errCode: 0,
+        errMessage: "ok",
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
 module.exports = {
   createSpecialty: createSpecialty,
   getAllSpecialty: getAllSpecialty,
   getDetailSpecialtyById: getDetailSpecialtyById,
+  updateSpecialty: updateSpecialty,
+  deleteSpecialty: deleteSpecialty
 };

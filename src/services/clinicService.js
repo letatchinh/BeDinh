@@ -119,9 +119,66 @@ let getDetailClinicById = (inputId) => {
   });
 };
 
+let updateClinic = (id, data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const clinic = await db.Clinic.findOne({
+        where: {
+          id,
+        }
+      });
+      if (!clinic) {
+        resolve({
+          errCode: 1,
+          errMessage: "clinic not found!",
+        });
+      } else {
+        const clinicUpdated = await db.Clinic.update({
+          name: data.name,
+          address: data.image,
+          descriptionHTML: data.descriptionHTML,
+          descriptionMarkdown: data.descriptionMarkdown
+        }, {
+          where: {
+            id,
+          }
+        });
+
+        resolve({
+          errCode: 0,
+          errMessage: "ok",
+          data: clinicUpdated,
+        });
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+let deleteClinic = (id) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await db.Clinic.destroy({
+        where: {
+          id,
+        }
+      });
+      resolve({
+        errCode: 0,
+        errMessage: "ok",
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
 module.exports = {
   createClinic: createClinic,
   getAllClinic: getAllClinic,
   getDetailClinicById: getDetailClinicById,
-  getClinicByName:getClinicByName
+  getClinicByName:getClinicByName,
+  updateClinic: updateClinic,
+  deleteClinic: deleteClinic
 };

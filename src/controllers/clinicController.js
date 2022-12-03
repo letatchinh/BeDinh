@@ -51,9 +51,39 @@ let getDetailClinicByName = async (req, res) => {
   }
 };
 
+let updateClinic = async (req, res) => {
+  try {
+    const clinicId = req.query.id;
+    const clinicUpdated = await clinicService.updateClinic(clinicId, req.body);
+    return res.status(200).json(clinicUpdated);
+  } catch (e) {
+    console.log(e);
+    return res.status(200).json({
+      errCode: -1,
+      errMessage: "Error from the server",
+    });
+  }
+};
+
+let deleteClinic = async (req, res) => {
+  try {
+    const clinicId = req.query.id;
+    await clinicService.deleteClinic(clinicId);
+    return res.status(200).json('Delete clinic success!');
+  } catch (e) {
+    console.log(e);
+    return res.status(200).json({
+      errCode: -1,
+      errMessage: "Error from the server",
+    });
+  }
+}
+
 module.exports = {
   createClinic: createClinic,
   getAllClinic: getAllClinic,
   getDetailClinicById: getDetailClinicById,
-  getDetailClinicByName : getDetailClinicByName
+  getDetailClinicByName : getDetailClinicByName,
+  updateClinic: updateClinic,
+  deleteClinic: deleteClinic
 };
