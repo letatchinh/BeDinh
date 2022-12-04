@@ -6,6 +6,8 @@ import patientController from "../controllers/patientController";
 import specialtyController from "../controllers/specialtyController";
 import clinicController from "../controllers/clinicController";
 import commentController from "../controllers/commentController";
+import medicalPackageController from '../controllers/medicalPackageController';
+import medicalProductController from '../controllers/medicalProductController'
 
 let router = express.Router();
 
@@ -85,6 +87,20 @@ let initWebRoutes = (app) => {
     "/api/get-comment-by-userId",
     commentController.getCommentByUserId
   );
+
+  // Medical package router (Gói khám)
+  router.post("/api/create-medical-package",medicalPackageController.createMedicalPackage);
+  router.get("/api/get-all-medical-package", medicalPackageController.getAllMedicalPackage);
+  router.get("/api/get-medical-package-by-id", medicalPackageController.getMedicalPackageById);
+  router.put("/api/update-medical-package", medicalPackageController.updateMedicalPackage);
+  router.delete("/api/delete-medical-package", medicalPackageController.deleteMedicalPackage);
+
+  // Medical products router (Sản phẩm y tế)
+  router.post("/api/create-medical-product",medicalProductController.createMedicalProduct);
+  router.get("/api/get-all-medical-product", medicalProductController.getAllMedicalProduct);
+  router.get("/api/get-medical-product-by-id", medicalProductController.getMedicalProductById);
+  router.put("/api/update-medical-product", medicalProductController.updateMedicalProduct);
+  router.delete("/api/delete-medical-product", medicalProductController.deleteMedicalProduct);
 
   return app.use("/", router);
 };
