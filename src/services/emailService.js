@@ -59,7 +59,7 @@ let getBodyHTMLEmailRemedy = (dataSend) => {
     result = `
        <h3>Xin chào ${dataSend.patientName}!</h3>
         <p>Bạn nhận được email này vì đã đặt lịch khám bệnh online trên Hospital-Three chàng ngốc</p>
-        <p>Thông tin đơn thuốc/hóa đơn được gửi trong file đính kèm</p>
+       
         <div>Xin chân thành cảm ơn!</div>
     `;
   }
@@ -68,7 +68,7 @@ let getBodyHTMLEmailRemedy = (dataSend) => {
     result = `
         <h3>Dear ${dataSend.patientName}!</h3>
         <p>You received this email because you booked an online medical appointment on Hospital-Three </p>
-        <p>Prescription/invoice information sent in attachment</p>
+     
         <div>Thank you very much</div>
     `;
   }
@@ -96,15 +96,15 @@ let sendAttachment = async (dataSend) => {
         to: dataSend.email, // list of receivers
         subject: "Thông tin đặt lịch khám bệnh", // Subject line
         html: getBodyHTMLEmailRemedy(dataSend), // html body
-        attachments: [
-          {
-            filename: `remedy-${
-              dataSend.patientId
-            }-${new Date().getTime()}.png`,
-            content: dataSend.imgBase64.split("base64,")[1],
-            encoding: "base64",
-          },
-        ],
+        // attachments: [
+        //   {
+        //     filename: `remedy-${
+        //       dataSend.patientId
+        //     }-${new Date().getTime()}.png`,
+            
+        //     encoding: "base64",
+        //   },
+        // ],
       });
 
       resolve(true);

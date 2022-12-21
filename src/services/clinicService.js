@@ -163,9 +163,10 @@ let updateClinic = (id, data) => {
       } else {
         const clinicUpdated = await db.Clinic.update({
           name: data.name,
-          address: data.image,
+          address: data.address,
           descriptionHTML: data.descriptionHTML,
-          descriptionMarkdown: data.descriptionMarkdown
+          descriptionMarkdown: data.descriptionMarkdown,
+          image: data.image,
         }, {
           where: {
             id,

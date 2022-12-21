@@ -1,3 +1,4 @@
+import db from "../models";
 import commentService from "../services/commentService";
 
 let createNewComment = async (req, res) => {

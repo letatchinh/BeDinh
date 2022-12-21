@@ -1,5 +1,6 @@
-import db from "../models/index";
+import db, { Sequelize } from "../models/index";
 import bcrypt from "bcryptjs";
+const Op = Sequelize.Op;
 
 const salt = bcrypt.genSaltSync(10);
 
@@ -86,6 +87,12 @@ let getAllUsers = (userId) => {
       let users = "abc";
       if (userId === "ALL") {
         users = await db.User.findAll({
+          where: {
+            [Op.or]: [
+              { roleId: "R1" },
+              { roleId: "R2" }
+            ]
+          },
           attributes: {
             exclude: ["password"],
           },
@@ -232,6 +239,30 @@ let getAllCodeService = (typeInput) => {
     }
   });
 };
+let getAllCodeServicePrice = (typeInput) => { //
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!typeInput) {
+        resolve({
+          errCode: 1,
+          errMessage: "Missing required parameters!",
+        });
+      } else {
+        console.log(typeInput);
+        let res = {};
+        let allcode = await db.Allcode.findAll({
+          where: { keyMap: {[Op.in]: typeInput} },
+          attributes : ["keyMap","valueVi"]
+        });
+        res.errCode = 0;
+        res.data = allcode;
+        resolve(res);
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 
 module.exports = {
   handleUserLogin: handleUserLogin,
@@ -240,4 +271,5 @@ module.exports = {
   deleteUser: deleteUser,
   updateUserData: updateUserData,
   getAllCodeService: getAllCodeService,
+  getAllCodeServicePrice:getAllCodeServicePrice,
 };

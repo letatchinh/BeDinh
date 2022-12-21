@@ -1,7 +1,12 @@
 import db from "../models/index";
-
 let createNewComment = async (inputData) => {
   return new Promise(async (resolve, reject) => {
+    await db.Comment.create({
+      userId: inputData.userId, 
+      text: inputData.text,
+      name: inputData.name,
+    });
+
     try {
       if (!inputData) {
         resolve({

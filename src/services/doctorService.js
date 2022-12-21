@@ -27,6 +27,10 @@ let getDoctorHome = (limitInput) => {
             as: "genderData",
             attributes: ["valueEn", "valueVi"],
           },
+          {
+            model : db.Doctor_Infor,
+            attributes :["specialtyId"]
+          }
         ],
         raw: true,
         nest: true,
@@ -48,13 +52,22 @@ let getAllDoctors = async () => {
       let doctors = await db.User.findAll({
         where: { roleId: "R2" },
         attributes: {
-          exclude: ["password", "image"],
+          exclude: ["password"],
         },
       });
+      if (doctors && doctors.length > 0) {
+        doctors.map((item) => {
+          item.image = new Buffer(item.image, "base64").toString("binary");
+          return item;
+        });
+      }
+      let cac = await db.Doctor_Infor.findAll({
 
+      })
       resolve({
         errCode: 0,
         data: doctors,
+        cac,
       });
     } catch (e) {
       reject(e);
@@ -367,6 +380,32 @@ let getScheduleByDates = (doctorId, date) => {
     }
   });
 };
+let DeleteScheduleByDate = (doctorId, date) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!doctorId || !date) {
+        resolve({
+          errCode: 1,
+          errMessage: "Missing required parameter",
+        });
+      } else {
+        await db.Schedule.destroy({
+         where: {
+          doctorId: doctorId,
+          date: date,
+         }
+       })
+       resolve({
+        errCode: 0,
+        errMessage: "ok",
+      });
+        
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 
 let getExtraInforDoctorById = (idInput) => {
   return new Promise(async (resolve, reject) => {
@@ -514,7 +553,7 @@ let getListPatientForDoctor = (doctorId, date) => {
             {
               model: db.User,
               as: "patientData",
-              attributes: ["email", "firstName", "gender", "address"],
+              attributes: ["email", "firstName", "gender", "address","phonenumber"],
               include: [
                 {
                   model: db.Allcode,
@@ -543,6 +582,51 @@ let getListPatientForDoctor = (doctorId, date) => {
     }
   });
 };
+let getListPatientForDoctorS3 = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+   
+        let data = await db.Booking.findAll({
+          where: {
+            statusId: "S3",
+          },
+          attributes: {
+            exclude: ["password"],
+          },
+
+          include: [
+            {
+              model: db.User,
+              as: "patientData",
+              attributes: ["email", "firstName", "gender", "address","phonenumber"],
+              include: [
+                {
+                  model: db.Allcode,
+                  as: "genderData",
+                  attributes: ["valueEn", "valueVi"],
+                },
+              ],
+            },
+            {
+              model: db.Allcode,
+              as: "timeTypeDataPatient",
+              attributes: ["valueEn", "valueVi"],
+            },
+          ],
+          raw: false,
+          nest: true,
+        });
+
+        resolve({
+          errCode: 0,
+          data: data,
+        });
+      
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 
 let sendRemedy = (data) => {
   return new Promise(async (resolve, reject) => {
@@ -551,8 +635,7 @@ let sendRemedy = (data) => {
         !data.email ||
         !data.doctorId ||
         !data.patientId ||
-        !data.timeType ||
-        !data.imgBase64
+        !data.timeType 
       ) {
         resolve({
           errCode: 1,
@@ -601,4 +684,6 @@ module.exports = {
   getProfileDoctorById: getProfileDoctorById,
   getListPatientForDoctor: getListPatientForDoctor,
   sendRemedy: sendRemedy,
+  getListPatientForDoctorS3:getListPatientForDoctorS3,
+  DeleteScheduleByDate:DeleteScheduleByDate
 };

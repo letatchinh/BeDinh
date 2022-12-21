@@ -27,18 +27,10 @@ let postBookAppointment = (data) => {
         });
       } else {
         let token = uuidv4();
-        await emailService.sendSimpleEmail({
-          reciverEmail: data.email,
-          patientName: data.fullName,
-          time: data.timeString,
-          doctorName: data.doctorName,
-          language: data.language,
-          redirectLink: buildUrlEmail(data.doctorId, token),
-        });
-
         let user = await db.User.findOrCreate({
           where: {
             email: data.email,
+            firstName : data.fullName
           },
           defaults: {
             email: data.email,
@@ -46,29 +38,76 @@ let postBookAppointment = (data) => {
             gender: data.selectedGender,
             address: data.address,
             firstName: data.fullName,
+            phonenumber : data.phoneNumber
           },
         });
 
-        if (user && user[0]) {
-          await db.Booking.findOrCreate({
-            where: { patientId: user[0].id },
-            defaults: {
-              statusId: "S1",
-              doctorId: data.doctorId,
-              patientId: user[0].id,
-              date: data.date,
-              timeType: data.timeType,
-              token: token,
-            },
+        // if (user && user[0]) {
+        //   await db.Booking.findOrCreate({
+        //     where: { patientId: user[0].id , date : data.date },
+        //     defaults: {
+        //       statusId: "S1",
+        //       doctorId: data.doctorId,
+        //       patientId: user[0].id,
+        //       date: data.date,
+        //       timeType: data.timeType,
+        //       token: token,
+        //     },
+        //   });
+        // }
+        const book = await db.Booking.findOne({where : {doctorId : data.doctorId , timeType : data.timeType , date : data.date}})
+        if(book){
+          resolve({
+            book,
+            errCode: -1,
+            errMessage: "Lich nay đã có người đặt",
           });
         }
-
-        resolve({
-          // data: user,
-          errCode: 0,
-          errMessage: "Save infor patient succeed!",
-        });
+        else{
+          const newBooking = await db.Booking.create({
+                  statusId: "S1",
+                  doctorId: data.doctorId,
+                  patientId: user[0].id,
+                  date: data.date,
+                  timeType: data.timeType,
+                  token: token,
+                })
+                await emailService.sendSimpleEmail({
+                  reciverEmail: data.email,
+                  patientName: data.fullName,
+                  time: data.timeString,
+                  doctorName: data.doctorName,
+                  language: data.language,
+                  redirectLink: buildUrlEmail(data.doctorId, token),
+                }); 
+        
+                resolve({
+                  // data: book,
+                  errCode: 0,
+                  errMessage: "Save infor patient Success!",
+                });
+        }
+        
       }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+let deleteBooking = (id) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await db.Booking.destroy({
+        where: {
+          id,
+        }
+      });
+      resolve({
+        data: id,
+        errCode: 0,
+        errMessage: "Save infor patient Success!",
+      });
     } catch (e) {
       reject(e);
     }
@@ -118,4 +157,5 @@ let postVerifyBookAppointment = (data) => {
 module.exports = {
   postBookAppointment: postBookAppointment,
   postVerifyBookAppointment: postVerifyBookAppointment,
+  deleteBooking: deleteBooking,
 };

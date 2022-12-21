@@ -40,6 +40,10 @@ let initWebRoutes = (app) => {
     "/api/get-schedule-doctor-by-date",
     doctorController.getScheduleByDate
   );
+  router.delete(
+    "/api/delete-schedule-doctor-by-date",
+    doctorController.DeleteScheduleByDates
+  );
   router.get(
     "/api/get-extra-infor-doctor-by-id",
     doctorController.getExtraInforDoctorById
@@ -52,6 +56,10 @@ let initWebRoutes = (app) => {
     "/api/get-list-patient-for-doctor",
     doctorController.getListPatientForDoctor
   );
+  router.get(
+    "/api/get-list-patient-for-doctor-s3",
+    doctorController.getListPatientForDoctorS3
+  );
   router.post("/api/send-remedy", doctorController.sendRemedy);
 
   router.post(
@@ -62,7 +70,9 @@ let initWebRoutes = (app) => {
     "/api/verify-book-appointment",
     patientController.postVerifyBookAppointment
   );
-
+    router.delete("/api/deleteBooking/:id",
+    patientController.deleteBooking
+    )
   router.post("/api/create-new-specialty", specialtyController.createSpecialty);
   router.get("/api/get-specialty", specialtyController.getAllSpecialty);
   router.get(
@@ -84,10 +94,14 @@ let initWebRoutes = (app) => {
 
   //comment
   router.get(
-    "/api/get-comment-by-userId",
+    "/api/getCommentById",
     commentController.getCommentByUserId
   );
-
+  router.post(
+    "/api/createComment",
+    commentController.createNewComment
+  );
+    router.post("/api/allCode2",userController.getAllCodePrice)
   // Medical package router (Gói khám)
   router.post("/api/create-medical-package",medicalPackageController.createMedicalPackage);
   router.get("/api/get-all-medical-package", medicalPackageController.getAllMedicalPackage);
